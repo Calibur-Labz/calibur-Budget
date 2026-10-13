@@ -36,16 +36,6 @@ export async function saveBudget(input: z.input<typeof budgetSchema>): Promise<A
   return { ok: true };
 }
 
-export async function saveCurrency(currency: string): Promise<ActionResult> {
-  const userId = await requireSession();
-  const parsed = z.enum(CURRENCIES).safeParse(currency);
-  if (!parsed.success) return { ok: false, error: "Pick a currency from the list." };
-  await getSettings();
-  await SettingsModel.updateOne({ key: userId }, { currency: parsed.data });
-  revalidatePath("/", "layout");
-  return { ok: true };
-}
-
 const categorySchema = z.object({
   name: z.string().trim().min(1).max(20),
   icon: z.enum(ICON_NAMES),

@@ -14,8 +14,11 @@ const TABS = [
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
+const HOME = TABS.findIndex((t) => t.href === "/");
+
 // Each tab is a 64px cell; the bar is a full pill with straight edges.
 // The active tile sits 8px inside it as a circle, concentric with the pill's ends.
+// Home is the main action: a larger button that rises out of the middle of the bar.
 const CELL = 64;
 const WIDTH = CELL * TABS.length;
 const RADIUS = 32;
@@ -56,15 +59,19 @@ export function BottomNav() {
             className="glass-accent pointer-events-none absolute top-2 left-2 h-12 w-12 rounded-full transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
             style={{
               transform: `translateX(${Math.max(index, 0) * CELL}px)`,
-              opacity: index < 0 ? 0 : 1,
+              // Home has its own button, so the tile only marks the other tabs
+              opacity: index < 0 || index === HOME ? 0 : 1,
             }}
           />
           {TABS.map(({ href, label, icon: Icon }, i) => {
             const active = i === index;
+            // Home's cell stays empty: its button sits above the bar, outside the clip
+            if (i === HOME) return <li key={href} aria-hidden className="h-16 w-16" />;
             return (
               <li key={href} className="relative h-16 w-16">
                 <Link
                   href={href}
+                  prefetch
                   onClick={() => setTapped({ from: pathname, href })}
                   aria-label={label}
                   title={label}
@@ -98,6 +105,21 @@ export function BottomNav() {
           <path d={SHAPE} stroke="rgba(0, 102, 204, 0.2)" strokeWidth="2.5" />
           <path d={SHAPE} stroke="url(#nav-rim)" strokeWidth="1.5" />
         </svg>
+
+        <Link
+          href="/"
+          prefetch
+          onClick={() => setTapped({ from: pathname, href: "/" })}
+          aria-label="Home"
+          title="Home"
+          aria-current={pathname === "/" ? "page" : undefined}
+          className={`glass-accent absolute -top-5 flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full text-accent-ink transition-transform duration-300 active:scale-95 motion-reduce:transition-none ${
+            index === HOME ? "scale-105" : ""
+          }`}
+          style={{ left: HOME * CELL - 4, border: "4px solid #fff" }}
+        >
+          <House size={32} strokeWidth={index === HOME ? 2.5 : 2.2} />
+        </Link>
       </div>
     </nav>
   );

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { cookies } from "next/headers";
 import { requireSession } from "./auth";
 import { connectDB } from "./db";
@@ -41,15 +42,21 @@ export async function getToday(): Promise<string> {
   return todayInTz(tz ? decodeURIComponent(tz) : "UTC");
 }
 
-/** The signed-in user's settings, created with the default categories on first use. */
-export async function getSettings(): Promise<Settings> {
+/**
+ * The signed-in user's settings, created with the default categories on first use.
+ * Cached for the length of one request, so a page that asks twice reads once.
+ */
+export const getSettings = cache(async (): Promise<Settings> => {
   const userId = await requireSession();
   await connectDB();
-  const doc = await SettingsModel.findOneAndUpdate(
-    { key: userId },
-    { $setOnInsert: { categories: DEFAULT_CATEGORIES } },
-    { upsert: true, returnDocument: "after" },
-  ).lean();
+  // A plain read on every load; the upsert (a write) only runs the first time
+  const doc =
+    (await SettingsModel.findOne({ key: userId }).lean()) ??
+    (await SettingsModel.findOneAndUpdate(
+      { key: userId },
+      { $setOnInsert: { categories: DEFAULT_CATEGORIES } },
+      { upsert: true, returnDocument: "after" },
+    ).lean());
   return {
     mainBudget: doc.mainBudget ?? 0,
     dailyBudget: doc.dailyBudget ?? 0,
@@ -57,7 +64,7 @@ export async function getSettings(): Promise<Settings> {
     currency: doc.currency ?? "LKR",
     categories: (doc.categories ?? []).map((c) => ({ name: c.name, icon: c.icon, slot: c.slot })),
   };
-}
+});
 
 /** Expenses from `start` to `end` inclusive, newest first. */
 export async function getExpensesBetween(start: string, end: string): Promise<Expense[]> {

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { CircleCheck, TriangleAlert } from "lucide-react";
 import { slotColor } from "@/components/CategoryIcon";
-import { CurrencyButton } from "@/components/CurrencyButton";
 import { DailyChart } from "@/components/DailyChart";
 import { MonthSwitcher } from "@/components/MonthSwitcher";
 import { SpendingAnalysis } from "@/components/SpendingAnalysis";
@@ -133,7 +132,8 @@ function BalanceCard({ summary, currency }: { summary: Summary; currency: string
     <section className="glass-accent rounded-3xl p-5 text-accent-ink">
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium">{over ? "Over main budget by" : "Main budget left"}</p>
-        <CurrencyButton currency={currency} />
+        {/* Display only: the currency is changed in Settings */}
+        <span className="text-xs font-semibold tracking-wide opacity-90">{currency}</span>
       </div>
       <p className="mt-2 text-4xl font-semibold tracking-tight">
         {hasMain ? money(Math.abs(balance), currency) : "—"}

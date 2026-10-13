@@ -28,6 +28,8 @@ const paymentSchema = new Schema<PaymentDoc>(
   },
   { timestamps: true },
 );
+// The upcoming list is one user's payments, soonest first
+paymentSchema.index({ userId: 1, dueDate: 1, createdAt: 1 });
 
 // Recompile rather than reuse a cached model: after a hot reload the cached one still has
 // the old schema and silently drops fields added since

@@ -23,6 +23,8 @@ const expenseSchema = new Schema<ExpenseDoc>(
   },
   { timestamps: true },
 );
+// Every list is one user's expenses in a date range, newest first
+expenseSchema.index({ userId: 1, date: -1, createdAt: -1 });
 
 // Recompile rather than reuse a cached model: after a hot reload the cached one still has
 // the old schema and silently drops fields added since
