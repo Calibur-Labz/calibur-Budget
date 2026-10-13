@@ -5,6 +5,7 @@ import { connectDB } from "./db";
 import { DEFAULT_CATEGORIES, type Category } from "./categories";
 import { todayInTz } from "./dates";
 import { ExpenseModel } from "@/models/Expense";
+import { IncomeModel } from "@/models/Income";
 import { PaymentModel } from "@/models/Payment";
 import { SettingsModel } from "@/models/Settings";
 import { UserModel } from "@/models/User";
@@ -15,6 +16,13 @@ export interface Expense {
   id: string;
   amount: number;
   category: string;
+  note: string;
+  date: string;
+}
+
+export interface Income {
+  id: string;
+  amount: number;
   note: string;
   date: string;
 }
@@ -89,6 +97,25 @@ export async function getExpense(id: string): Promise<Expense | null> {
   const d = await ExpenseModel.findOne({ _id: id, userId }).lean();
   if (!d) return null;
   return { id: String(d._id), amount: d.amount, category: d.category, note: d.note ?? "", date: d.date };
+}
+
+/** Incomes from `start` to `end` inclusive, newest first. */
+export async function getIncomesBetween(start: string, end: string): Promise<Income[]> {
+  const userId = await requireSession();
+  await connectDB();
+  const docs = await IncomeModel.find({ userId, date: { $gte: start, $lte: end } })
+    .sort({ date: -1, createdAt: -1 })
+    .lean();
+  return docs.map((d) => ({ id: String(d._id), amount: d.amount, note: d.note ?? "", date: d.date }));
+}
+
+export async function getIncome(id: string): Promise<Income | null> {
+  if (!/^[a-f0-9]{24}$/.test(id)) return null;
+  const userId = await requireSession();
+  await connectDB();
+  const d = await IncomeModel.findOne({ _id: id, userId }).lean();
+  if (!d) return null;
+  return { id: String(d._id), amount: d.amount, note: d.note ?? "", date: d.date };
 }
 
 /** Every unpaid payment, soonest first. */

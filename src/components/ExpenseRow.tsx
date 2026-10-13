@@ -8,14 +8,16 @@ export function ExpenseRow({
   expense,
   categories,
   currency,
+  href = `/add?id=${expense.id}`,
 }: {
   expense: Expense;
   categories: Category[];
   currency: string;
+  href?: string;
 }) {
   return (
     <Link
-      href={`/add?id=${expense.id}`}
+      href={href}
       className="flex items-center gap-3 px-4 py-3 active:bg-surface-2"
     >
       <CategoryIcon category={findCategory(categories, expense.category)} />

@@ -16,6 +16,11 @@ export function moneyTrim(amount: number, currency: string): string {
   }).format(amount);
 }
 
+/** 1820 → "1.8K": for the calendar's day cells. */
+export function compact(amount: number): string {
+  return new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(amount);
+}
+
 /** "2026-10-12" → "Mon 12 Oct" */
 export function dayLabel(date: string): string {
   return new Intl.DateTimeFormat("en-GB", {
