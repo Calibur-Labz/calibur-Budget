@@ -46,7 +46,7 @@ export function BottomNav() {
           viewBox={`0 0 ${WIDTH} ${CELL}`}
           className="absolute inset-0 translate-y-2.5 overflow-visible blur-md"
         >
-          <path d={SHAPE} fill="rgba(0, 134, 196, 0.28)" />
+          <path d={SHAPE} fill="rgba(0, 102, 204, 0.26)" />
         </svg>
 
         <ul className="glass-liquid relative flex h-full" style={{ clipPath: `path("${SHAPE}")` }}>
@@ -95,7 +95,7 @@ export function BottomNav() {
               <stop offset="1" stopColor="#fff" stopOpacity="0.9" />
             </linearGradient>
           </defs>
-          <path d={SHAPE} stroke="rgba(0, 150, 220, 0.22)" strokeWidth="2.5" />
+          <path d={SHAPE} stroke="rgba(0, 102, 204, 0.2)" strokeWidth="2.5" />
           <path d={SHAPE} stroke="url(#nav-rim)" strokeWidth="1.5" />
         </svg>
       </div>

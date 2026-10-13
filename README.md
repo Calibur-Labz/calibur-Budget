@@ -1,16 +1,18 @@
 # Budget
 
-A mobile-style daily expense tracker. Next.js (App Router) + MongoDB, single user, PIN locked.
+A mobile-style daily expense tracker. Next.js (App Router) + MongoDB, with email and password accounts; each account has its own data.
 
-- **Home** – balance, total spent, today's limit, leftover or exceeded, daily chart, category breakdown
+- **Home** – main budget left, daily budget, spent today, leftover or exceeded, daily chart, category breakdown
 - **Add** – keypad entry with category, date and note
 - **History** – expenses by day with an over/under badge per day; tap one to edit or delete
-- **Settings** – monthly budget, currency, categories, lock
+- **Upcoming** – payments that are due; marking one paid adds it to today's expenses
+- **Settings** – main budget, daily budget, month start day, currency, categories, log out
 
-## How the day limit works
+## How the budgets work
 
-Each morning, whatever is left of the monthly budget is spread over the days remaining
-(including today). Spend less and tomorrow's limit rises; spend more and it drops.
+The main budget is the money for the whole budget month (from salary); the top card shows what
+is left of it after the month's spending. The daily budget is a separate spending target, the
+same every day. A budget month can start on any day from 1 to 28.
 The maths lives in `src/lib/budget.ts` and is covered by `src/lib/budget.test.ts`.
 
 ## Setup
@@ -27,7 +29,6 @@ The maths lives in `src/lib/budget.ts` and is covered by `src/lib/budget.test.ts
    | Variable | What it is |
    |---|---|
    | `MONGODB_URI` | Atlas connection string, with `/budget` as the database name |
-   | `APP_PIN` | The PIN you type to open the app (digits, 4–12 long) |
    | `SESSION_SECRET` | Random string, 16+ characters (`openssl rand -base64 32`) |
 
 3. Run it:
@@ -37,14 +38,15 @@ The maths lives in `src/lib/budget.ts` and is covered by `src/lib/budget.test.ts
    npm run dev
    ```
 
-Open http://localhost:3000, enter your PIN, then set a monthly budget in Settings.
+Open http://localhost:3000, create an account, then set your budgets in Settings.
+Passwords are stored as salted scrypt hashes.
 
 To try it on your phone, run `npm run dev -- -H 0.0.0.0` and open `http://<your-mac-ip>:3000`
 on the same Wi-Fi.
 
 ## Install as an app
 
-Deploy it (for example to Vercel, with the three env variables set), open the site on your phone
+Deploy it (for example to Vercel, with the two env variables set), open the site on your phone
 and choose **Add to Home Screen**. It then opens fullscreen with its own icon.
 
 ## Scripts

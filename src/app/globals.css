@@ -12,9 +12,9 @@
   --grid: rgba(10, 37, 51, 0.08);
   --axis: rgba(10, 37, 51, 0.2);
   --line: rgba(10, 37, 51, 0.08);
-  --accent: #00b7ff;
-  /* Accent for small text, where #00b7ff is too pale on white */
-  --accent-deep: #0086c4;
+  --accent: #0066cc;
+  /* Darker accent for small text */
+  --accent-deep: #0052a3;
   --accent-ink: #ffffff;
   --good: #0ca30c;
   --good-ink: #006300;
@@ -22,7 +22,7 @@
   --bad-ink: #a82525;
 
   /* Category colours, fixed order */
-  --series-1: #00b7ff;
+  --series-1: #0066cc;
   --series-2: #eb6834;
   --series-3: #1baf7a;
   --series-4: #eda100;
@@ -82,13 +82,13 @@
   border-radius: 9999px;
   background:
     radial-gradient(60% 120% at 20% 0%, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0) 70%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(0, 183, 255, 0.18) 100%);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(0, 102, 204, 0.16) 100%);
   backdrop-filter: blur(18px) saturate(200%) brightness(1.06);
   -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.06);
   box-shadow:
     inset 0 2px 1px 0 rgba(255, 255, 255, 1),
-    inset 0 -2px 2px 0 rgba(0, 134, 196, 0.16),
-    inset 0 -12px 16px -12px rgba(0, 183, 255, 0.35);
+    inset 0 -2px 2px 0 rgba(0, 82, 163, 0.16),
+    inset 0 -12px 16px -12px rgba(0, 102, 204, 0.3);
 }
 
 /* Hero panel and active tab tile: blue glass. Specular corner and rim, a
@@ -96,34 +96,24 @@
 @utility glass-accent {
   background:
     radial-gradient(90% 70% at 100% 0%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 60%),
-    radial-gradient(70% 80% at 0% 100%, rgba(0, 120, 210, 0.45) 0%, rgba(0, 120, 210, 0) 70%),
-    linear-gradient(150deg, rgba(0, 195, 255, 0.9) 0%, rgba(0, 163, 238, 0.86) 100%);
+    radial-gradient(70% 80% at 0% 100%, rgba(0, 60, 140, 0.5) 0%, rgba(0, 60, 140, 0) 70%),
+    linear-gradient(150deg, rgba(0, 122, 224, 0.92) 0%, rgba(0, 102, 204, 0.9) 100%);
   backdrop-filter: blur(28px) saturate(220%);
   -webkit-backdrop-filter: blur(28px) saturate(220%);
   border: 1px solid rgba(255, 255, 255, 0.65);
   box-shadow:
     inset 0 2px 1px 0 rgba(255, 255, 255, 0.75),
     inset 2px 0 1px 0 rgba(255, 255, 255, 0.35),
-    inset 0 -1.5px 1px 0 rgba(0, 70, 140, 0.35),
-    inset 0 -16px 26px -16px rgba(0, 80, 160, 0.5),
-    0 2px 4px rgba(0, 110, 170, 0.15),
-    0 24px 46px -18px rgba(0, 150, 220, 0.7);
+    inset 0 -1.5px 1px 0 rgba(0, 40, 100, 0.4),
+    inset 0 -16px 26px -16px rgba(0, 50, 120, 0.55),
+    0 2px 4px rgba(0, 82, 163, 0.18),
+    0 24px 46px -18px rgba(0, 102, 204, 0.6);
 }
 
-/* Gloss on every solid accent fill: buttons, active tabs, chart bars */
-.bg-accent {
-  background-image: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.42) 0%,
-    rgba(255, 255, 255, 0.08) 48%,
-    rgba(0, 110, 200, 0.14) 100%
-  );
-}
+/* Solid accent buttons: flat colour, lifted by a soft shadow */
 button.bg-accent,
 a.bg-accent {
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.65),
-    0 10px 22px -10px rgba(0, 150, 220, 0.85);
+  box-shadow: 0 10px 22px -10px rgba(0, 102, 204, 0.7);
 }
 
 html {

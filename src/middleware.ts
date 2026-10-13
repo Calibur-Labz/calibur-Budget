@@ -1,15 +1,19 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
 
-export async function middleware(req: NextRequest) {
-  const authed = await verifySessionToken(req.cookies.get(SESSION_COOKIE)?.value);
-  const onUnlock = req.nextUrl.pathname === "/unlock";
+// "/unlock" was the PIN screen; old bookmarks land on the right side of the gate
+const SIGNED_OUT_ONLY = ["/login", "/register", "/unlock"];
 
-  if (!authed && !onUnlock) {
-    return NextResponse.redirect(new URL("/unlock", req.url));
-  }
-  if (authed && onUnlock) {
+export async function middleware(req: NextRequest) {
+  const authed = (await verifySessionToken(req.cookies.get(SESSION_COOKIE)?.value)) !== null;
+  const { pathname } = req.nextUrl;
+  const signedOutPage = SIGNED_OUT_ONLY.includes(pathname);
+
+  if (authed && signedOutPage) {
     return NextResponse.redirect(new URL("/", req.url));
+  }
+  if (!authed && (!signedOutPage || pathname === "/unlock")) {
+    return NextResponse.redirect(new URL("/login", req.url));
   }
   return NextResponse.next();
 }

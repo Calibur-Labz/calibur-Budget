@@ -7,7 +7,7 @@ import { round2 } from "@/lib/budget";
 import { CURRENCIES, ICON_NAMES, MAX_CATEGORIES } from "@/lib/categories";
 import { MAX_START_DAY } from "@/lib/dates";
 import { connectDB } from "@/lib/db";
-import { SETTINGS_KEY, getSettings } from "@/lib/queries";
+import { getSettings } from "@/lib/queries";
 import { SettingsModel } from "@/models/Settings";
 import type { ActionResult } from "./expenses";
 
@@ -19,12 +19,12 @@ const budgetSchema = z.object({
 });
 
 export async function saveBudget(input: z.input<typeof budgetSchema>): Promise<ActionResult> {
-  await requireSession();
+  const userId = await requireSession();
   const parsed = budgetSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "Enter valid amounts." };
   await getSettings();
   await SettingsModel.updateOne(
-    { key: SETTINGS_KEY },
+    { key: userId },
     {
       mainBudget: round2(parsed.data.mainBudget),
       dailyBudget: round2(parsed.data.dailyBudget),
@@ -37,11 +37,11 @@ export async function saveBudget(input: z.input<typeof budgetSchema>): Promise<A
 }
 
 export async function saveCurrency(currency: string): Promise<ActionResult> {
-  await requireSession();
+  const userId = await requireSession();
   const parsed = z.enum(CURRENCIES).safeParse(currency);
   if (!parsed.success) return { ok: false, error: "Pick a currency from the list." };
   await getSettings();
-  await SettingsModel.updateOne({ key: SETTINGS_KEY }, { currency: parsed.data });
+  await SettingsModel.updateOne({ key: userId }, { currency: parsed.data });
   revalidatePath("/", "layout");
   return { ok: true };
 }
@@ -53,7 +53,7 @@ const categorySchema = z.object({
 });
 
 export async function addCategory(input: z.input<typeof categorySchema>): Promise<ActionResult> {
-  await requireSession();
+  const userId = await requireSession();
   const parsed = categorySchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "Give the category a name (up to 20 characters)." };
   const { categories } = await getSettings();
@@ -64,18 +64,18 @@ export async function addCategory(input: z.input<typeof categorySchema>): Promis
   if (categories.some((c) => c.name.toLowerCase() === name.toLowerCase())) {
     return { ok: false, error: "That category already exists." };
   }
-  await SettingsModel.updateOne({ key: SETTINGS_KEY }, { $push: { categories: parsed.data } });
+  await SettingsModel.updateOne({ key: userId }, { $push: { categories: parsed.data } });
   revalidatePath("/", "layout");
   return { ok: true };
 }
 
 export async function removeCategory(name: string): Promise<ActionResult> {
-  await requireSession();
+  const userId = await requireSession();
   const { categories } = await getSettings();
   if (!categories.some((c) => c.name === name)) return { ok: true };
   if (categories.length <= 1) return { ok: false, error: "Keep at least one category." };
   await connectDB();
-  await SettingsModel.updateOne({ key: SETTINGS_KEY }, { $pull: { categories: { name } } });
+  await SettingsModel.updateOne({ key: userId }, { $pull: { categories: { name } } });
   revalidatePath("/", "layout");
   return { ok: true };
 }

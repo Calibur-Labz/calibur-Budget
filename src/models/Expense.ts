@@ -2,6 +2,8 @@ import { Schema, deleteModel, model, models, type Model } from "mongoose";
 import { DATE_RE } from "@/lib/dates";
 
 export interface ExpenseDoc {
+  /** Owner's user id */
+  userId: string;
   amount: number;
   category: string;
   note: string;
@@ -13,6 +15,7 @@ export interface ExpenseDoc {
 
 const expenseSchema = new Schema<ExpenseDoc>(
   {
+    userId: { type: String, required: true, index: true },
     amount: { type: Number, required: true, min: 0.01 },
     category: { type: String, required: true, trim: true },
     note: { type: String, default: "", trim: true },

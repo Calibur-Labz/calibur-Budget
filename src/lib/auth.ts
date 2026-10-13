@@ -1,10 +1,13 @@
 import { cookies } from "next/headers";
 import { SESSION_COOKIE, verifySessionToken } from "./session";
 
-/** Server actions call this themselves; middleware alone is not the only gate. */
-export async function requireSession(): Promise<void> {
+/**
+ * The signed-in user's id. Server actions and queries call this themselves and scope
+ * everything they touch to it; middleware alone is not the only gate.
+ */
+export async function requireSession(): Promise<string> {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
-  if (!(await verifySessionToken(token))) {
-    throw new Error("Locked");
-  }
+  const userId = await verifySessionToken(token);
+  if (!userId) throw new Error("Not signed in");
+  return userId;
 }

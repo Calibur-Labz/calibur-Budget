@@ -24,7 +24,7 @@ const expenseSchema = z.object({
 export type ExpenseInput = z.input<typeof expenseSchema>;
 
 export async function saveExpense(input: ExpenseInput): Promise<ActionResult> {
-  await requireSession();
+  const userId = await requireSession();
   const parsed = expenseSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "Check the amount, category and date." };
   const { id, ...data } = parsed.data;
@@ -38,20 +38,22 @@ export async function saveExpense(input: ExpenseInput): Promise<ActionResult> {
 
   await connectDB();
   if (id) {
-    const updated = await ExpenseModel.findByIdAndUpdate(id, data, { runValidators: true });
+    const updated = await ExpenseModel.findOneAndUpdate({ _id: id, userId }, data, {
+      runValidators: true,
+    });
     if (!updated) return { ok: false, error: "That expense no longer exists." };
   } else {
-    await ExpenseModel.create(data);
+    await ExpenseModel.create({ ...data, userId });
   }
   revalidatePath("/", "layout");
   return { ok: true };
 }
 
 export async function deleteExpense(id: string): Promise<ActionResult> {
-  await requireSession();
+  const userId = await requireSession();
   if (!objectId.safeParse(id).success) return { ok: false, error: "Invalid expense." };
   await connectDB();
-  await ExpenseModel.findByIdAndDelete(id);
+  await ExpenseModel.deleteOne({ _id: id, userId });
   revalidatePath("/", "layout");
   return { ok: true };
 }

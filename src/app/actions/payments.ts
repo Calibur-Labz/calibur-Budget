@@ -24,7 +24,7 @@ const paymentSchema = z.object({
 export type PaymentInput = z.input<typeof paymentSchema>;
 
 export async function addPayment(input: PaymentInput): Promise<ActionResult> {
-  await requireSession();
+  const userId = await requireSession();
   const parsed = paymentSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "Check the name, amount and due date." };
   const data = { ...parsed.data, amount: round2(parsed.data.amount) };
@@ -36,20 +36,21 @@ export async function addPayment(input: PaymentInput): Promise<ActionResult> {
   }
 
   await connectDB();
-  await PaymentModel.create({ ...data, anchorDay: dayOf(data.dueDate) });
+  await PaymentModel.create({ ...data, userId, anchorDay: dayOf(data.dueDate) });
   revalidatePath("/", "layout");
   return { ok: true };
 }
 
 /** Records the payment as an expense dated today, then rolls a monthly one forward or removes a one-off. */
 export async function payPayment(id: string): Promise<ActionResult> {
-  await requireSession();
+  const userId = await requireSession();
   if (!objectId.safeParse(id).success) return { ok: false, error: "Invalid payment." };
   await connectDB();
-  const payment = await PaymentModel.findById(id);
+  const payment = await PaymentModel.findOne({ _id: id, userId });
   if (!payment) return { ok: false, error: "That payment no longer exists." };
 
   await ExpenseModel.create({
+    userId,
     amount: payment.amount,
     category: payment.category,
     note: payment.name,
@@ -66,10 +67,10 @@ export async function payPayment(id: string): Promise<ActionResult> {
 }
 
 export async function deletePayment(id: string): Promise<ActionResult> {
-  await requireSession();
+  const userId = await requireSession();
   if (!objectId.safeParse(id).success) return { ok: false, error: "Invalid payment." };
   await connectDB();
-  await PaymentModel.findByIdAndDelete(id);
+  await PaymentModel.deleteOne({ _id: id, userId });
   revalidatePath("/", "layout");
   return { ok: true };
 }

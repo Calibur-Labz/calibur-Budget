@@ -2,6 +2,7 @@ import { Schema, deleteModel, model, models, type Model } from "mongoose";
 import type { Category } from "@/lib/categories";
 
 export interface SettingsDoc {
+  /** The owner's user id: one settings document per account */
   key: string;
   /** Money for the whole budget month, from salary */
   mainBudget: number;
@@ -11,8 +12,6 @@ export interface SettingsDoc {
   monthStartDay: number;
   currency: string;
   categories: Category[];
-  pinFails: number;
-  pinLockedUntil: Date | null;
 }
 
 const settingsSchema = new Schema<SettingsDoc>({
@@ -29,8 +28,6 @@ const settingsSchema = new Schema<SettingsDoc>({
       slot: { type: Number, required: true, min: 1, max: 8 },
     },
   ],
-  pinFails: { type: Number, default: 0 },
-  pinLockedUntil: { type: Date, default: null },
 });
 
 // Recompile rather than reuse a cached model: after a hot reload the cached one still has

@@ -6,13 +6,12 @@ export function money(amount: number, currency: string): string {
   }).format(amount);
 }
 
-export function moneyCompact(amount: number, currency: string): string {
+/** The full amount, without ".00" on whole numbers: for chart axis labels. */
+export function moneyTrim(amount: number, currency: string): string {
   return new Intl.NumberFormat("en", {
     style: "currency",
     currency,
     currencyDisplay: "narrowSymbol",
-    notation: "compact",
-    maximumFractionDigits: 1,
     trailingZeroDisplay: "stripIfInteger",
   }).format(amount);
 }
