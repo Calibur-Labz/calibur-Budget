@@ -1,0 +1,153 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --page: #ffffff;
+  /* Translucent: sits over the page wash and is blurred by .glass */
+  --surface: rgba(255, 255, 255, 0.58);
+  --surface-2: rgba(10, 37, 51, 0.05);
+  --ink: #0a2533;
+  --ink-2: #47606c;
+  --muted: #6b8591;
+  --grid: rgba(10, 37, 51, 0.08);
+  --axis: rgba(10, 37, 51, 0.2);
+  --line: rgba(10, 37, 51, 0.08);
+  --accent: #00b7ff;
+  /* Accent for small text, where #00b7ff is too pale on white */
+  --accent-deep: #0086c4;
+  --accent-ink: #ffffff;
+  --good: #0ca30c;
+  --good-ink: #006300;
+  --bad: #d03b3b;
+  --bad-ink: #a82525;
+
+  /* Category colours, fixed order */
+  --series-1: #00b7ff;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --series-5: #e87ba4;
+  --series-6: #008300;
+  --series-7: #6250d6;
+  --series-8: #e34948;
+}
+
+@theme inline {
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-grid: var(--grid);
+  --color-axis: var(--axis);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-deep: var(--accent-deep);
+  --color-accent-ink: var(--accent-ink);
+  --color-good: var(--good);
+  --color-good-ink: var(--good-ink);
+  --color-bad: var(--bad);
+  --color-bad-ink: var(--bad-ink);
+  --font-sans: var(--font-poppins), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Liquid glass panel, after iOS: a clear body, a specular rim that is brightest
+   top-left, a thin bevel along the bottom edge for thickness, and a layered
+   contact + ambient shadow so it floats off the page.
+   The shadow goes through --tw-shadow so ring-* still composes. */
+@utility glass {
+  background:
+    radial-gradient(120% 80% at 0% 0%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 60%),
+    radial-gradient(90% 60% at 100% 100%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 65%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.16) 100%);
+  backdrop-filter: blur(24px) saturate(200%) brightness(1.06);
+  -webkit-backdrop-filter: blur(24px) saturate(200%) brightness(1.06);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  --tw-ring-color: rgba(10, 37, 51, 0.07);
+  --tw-shadow:
+    inset 0 1.5px 0.5px 0 rgba(255, 255, 255, 1), inset 1.5px 0 0.5px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 1px 0 rgba(10, 37, 51, 0.07), inset 0 -10px 16px -12px rgba(10, 37, 51, 0.08),
+    0 1px 1px rgba(10, 37, 51, 0.04), 0 6px 14px -6px rgba(10, 37, 51, 0.08),
+    0 26px 52px -24px rgba(10, 37, 51, 0.18);
+  box-shadow:
+    var(--tw-inset-shadow, 0 0 #0000), var(--tw-inset-ring-shadow, 0 0 #0000),
+    var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+/* The floating tab bar: clear glass with a blue tint, and a light blur so
+   content scrolling underneath stays visible through it. It is clipped to its
+   outline, so the rim and shadow are drawn by SVGs in BottomNav. */
+@utility glass-liquid {
+  border-radius: 9999px;
+  background:
+    radial-gradient(60% 120% at 20% 0%, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0) 70%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(0, 183, 255, 0.18) 100%);
+  backdrop-filter: blur(18px) saturate(200%) brightness(1.06);
+  -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.06);
+  box-shadow:
+    inset 0 2px 1px 0 rgba(255, 255, 255, 1),
+    inset 0 -2px 2px 0 rgba(0, 134, 196, 0.16),
+    inset 0 -12px 16px -12px rgba(0, 183, 255, 0.35);
+}
+
+/* Hero panel and active tab tile: blue glass. Specular corner and rim, a
+   darker bevel along the bottom for thickness, and a blue glow underneath. */
+@utility glass-accent {
+  background:
+    radial-gradient(90% 70% at 100% 0%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 60%),
+    radial-gradient(70% 80% at 0% 100%, rgba(0, 120, 210, 0.45) 0%, rgba(0, 120, 210, 0) 70%),
+    linear-gradient(150deg, rgba(0, 195, 255, 0.9) 0%, rgba(0, 163, 238, 0.86) 100%);
+  backdrop-filter: blur(28px) saturate(220%);
+  -webkit-backdrop-filter: blur(28px) saturate(220%);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow:
+    inset 0 2px 1px 0 rgba(255, 255, 255, 0.75),
+    inset 2px 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1.5px 1px 0 rgba(0, 70, 140, 0.35),
+    inset 0 -16px 26px -16px rgba(0, 80, 160, 0.5),
+    0 2px 4px rgba(0, 110, 170, 0.15),
+    0 24px 46px -18px rgba(0, 150, 220, 0.7);
+}
+
+/* Gloss on every solid accent fill: buttons, active tabs, chart bars */
+.bg-accent {
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.42) 0%,
+    rgba(255, 255, 255, 0.08) 48%,
+    rgba(0, 110, 200, 0.14) 100%
+  );
+}
+button.bg-accent,
+a.bg-accent {
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.65),
+    0 10px 22px -10px rgba(0, 150, 220, 0.85);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  overscroll-behavior-y: none;
+}
+
+/* 16px inputs stop iOS Safari zooming the page on focus */
+input,
+select,
+textarea {
+  font-size: 16px;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
